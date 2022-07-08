@@ -56,7 +56,7 @@ func runMockHandler(method, url string) (*http.Response, error) {
 }
 
 func invokeInternal(method string, url string, headers http.Header) (*http.Response, error) {
-	request, _ := http.NewRequest(http.MethodPost, url, nil)
+	request, _ := http.NewRequest(method, url, nil)
 	request.Header = headers
 
 	client := http.Client{}
