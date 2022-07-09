@@ -18,15 +18,23 @@ go run main.go -port <any port>
 
 ## What we have
 
+- [x] minor `ping`<->`pong` route added.
 - [x] HTTP Api with 2 routes.
   - [x] `/proxy`
   - [x] `/proxy/logs`
-- [x] demonstrated how concurently track requests. See [request_tracker in observer package](./observer/request_tracker.go) in tracker package
+- [x] demonstrated how concurently track requests. See [request_tracker in observer package](./observer/request_tracker.go)
 - [x] `domain` & `observer` packages are covered with tests. See `*test.go` files in the corresponding packages
+- [x] graceful shutdown logic implemented. See [Start() in server.go in api package](./api/server.go)
 
 ## Request samples
 
 cURL samples can be run from command line
+
+### /ping
+
+```sh
+curl --request GET 'http://localhost:8080/ping'
+```
 
 ### /proxy
 

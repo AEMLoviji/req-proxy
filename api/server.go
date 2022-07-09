@@ -34,7 +34,7 @@ func (srv *Server) Start() {
 	}()
 	log.Printf("Listening on %s\n", srv.Addr)
 
-	// graceful shutdown logic.
+	// graceful shutdown logic
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt)
 	sig := <-quit
