@@ -1,22 +1,23 @@
-package proxy_test
+package domain_test
 
 import (
 	"errors"
 	"io"
 	"net/http"
 	"os"
+	"req-proxy/domain"
 	"req-proxy/http_client"
+	"req-proxy/observer"
 	"strings"
 	"testing"
-
-	"req-proxy/proxy"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestMain(m *testing.M) {
 	http_client.StartMockups()
-	os.Exit(m.Run())
+	c := m.Run()
+	os.Exit(c)
 }
 
 func TestForwardHttpClientError(t *testing.T) {
@@ -28,13 +29,15 @@ func TestForwardHttpClientError(t *testing.T) {
 		Err:        errors.New("http client error"),
 	})
 
-	req := proxy.ProxyRequest{
-		Method:  proxy.Get,
+	req := domain.ProxyRequest{
+		Method:  domain.Get,
 		Url:     "https://google.com",
 		Headers: nil,
 	}
 
-	resp, err := req.Forward()
+	rt := observer.NewProxyRequestTracker()
+	ps := domain.NewProxyService(rt)
+	resp, err := ps.Forward(&req)
 
 	assert.Nil(t, resp)
 	assert.NotNil(t, err)
@@ -56,13 +59,15 @@ func TestForwardSuccess(t *testing.T) {
 		},
 	})
 
-	req := proxy.ProxyRequest{
-		Method:  proxy.Get,
+	req := domain.ProxyRequest{
+		Method:  domain.Get,
 		Url:     "http://google.com",
 		Headers: nil,
 	}
 
-	resp, err := req.Forward()
+	rt := observer.NewProxyRequestTracker()
+	ps := domain.NewProxyService(rt)
+	resp, err := ps.Forward(&req)
 
 	assert.NotNil(t, resp)
 	assert.Nil(t, err)
@@ -84,17 +89,19 @@ func TestForwardSuccessRequestIsTracked(t *testing.T) {
 		},
 	})
 
-	req := proxy.ProxyRequest{
-		Method:  proxy.Get,
+	req := domain.ProxyRequest{
+		Method:  domain.Get,
 		Url:     "http://google.com",
 		Headers: nil,
 	}
 
-	resp, err := req.Forward()
+	rt := observer.NewProxyRequestTracker()
+	ps := domain.NewProxyService(rt)
+	resp, err := ps.Forward(&req)
 
 	assert.NotNil(t, resp)
 	assert.Nil(t, err)
 
-	tl := proxy.TrackList()
-	assert.EqualValues(t, 1, len(tl))
+	te := ps.RequestTracker.ListEntries()
+	assert.EqualValues(t, 1, len(te))
 }

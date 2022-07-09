@@ -1,15 +1,12 @@
-package proxy
+package domain
 
 import (
 	"net/http"
 	"req-proxy/http_client"
+	"req-proxy/observer"
 
 	"github.com/google/uuid"
 )
-
-type ProxyService interface {
-	Forward() (*ProxyResponse, error)
-}
 
 type HttpMethod string
 
@@ -33,11 +30,19 @@ type ProxyResponse struct {
 	Length  int64               `json:"length"`
 }
 
-func (pr *ProxyRequest) Forward() (*ProxyResponse, error) {
+type ProxyService struct {
+	RequestTracker observer.RequestTracker
+}
+
+func NewProxyService(rt observer.RequestTracker) *ProxyService {
+	return &ProxyService{RequestTracker: rt}
+}
+
+func (ps *ProxyService) Forward(pr *ProxyRequest) (*ProxyResponse, error) {
 	var proxyResponse *ProxyResponse
 
 	defer func() {
-		Track(TrackEntry{
+		ps.RequestTracker.AddEntry(observer.Entry{
 			ClientRequest:      pr,
 			ThirdPartyResponse: proxyResponse,
 		})

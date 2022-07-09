@@ -21,8 +21,8 @@ go run main.go -port <any port>
 - [x] HTTP Api with 2 routes.
   - [x] `/proxy`
   - [x] `/proxy/logs`
-- [x] demonstrated how concurently track requests. See [Track func.](./proxy/tracker.go) in tracker package
-- [x] domain logic covered with tests. See `*test.go` files in `proxy package`
+- [x] demonstrated how concurently track requests. See [request_tracker in observer package](./observer/request_tracker.go) in tracker package
+- [x] `domain` & `observer` packages are covered with tests. See `*test.go` files in the corresponding packages
 
 ## Request samples
 

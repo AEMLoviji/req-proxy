@@ -2,12 +2,13 @@ package main
 
 import (
 	"flag"
-	"req-proxy/app"
+	"req-proxy/api"
 )
 
 func main() {
 	port := flag.Int("port", 8080, "Application port")
 	flag.Parse()
 
-	app.Start(*port)
+	server := api.NewServer(*port)
+	server.Start()
 }

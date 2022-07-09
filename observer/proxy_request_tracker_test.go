@@ -1,27 +1,29 @@
-package proxy_test
+package observer_test
 
 import (
+	"req-proxy/observer"
 	"sync"
 	"testing"
-
-	"req-proxy/proxy"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestTrackAddEntryToTrackList(t *testing.T) {
+	requestTracker := observer.NewProxyRequestTracker()
 
-	proxy.Track(proxy.TrackEntry{
+	requestTracker.AddEntry(observer.Entry{
 		ClientRequest:      struct{}{},
 		ThirdPartyResponse: struct{}{},
 	})
 
-	assert.EqualValues(t, 1, len(proxy.TrackList()))
+	assert.EqualValues(t, 1, len(requestTracker.ListEntries()))
 }
 
 func TestTrackConcurentlyAddEntryToTrackList(t *testing.T) {
+	requestTracker := observer.NewProxyRequestTracker()
+
 	trackerFunc := func(wg *sync.WaitGroup) {
-		proxy.Track(proxy.TrackEntry{
+		requestTracker.AddEntry(observer.Entry{
 			ClientRequest:      struct{}{},
 			ThirdPartyResponse: struct{}{},
 		})
@@ -37,5 +39,5 @@ func TestTrackConcurentlyAddEntryToTrackList(t *testing.T) {
 	}
 	waitG.Wait()
 
-	assert.EqualValues(t, ConcurrentRunCount, len(proxy.TrackList()))
+	assert.EqualValues(t, ConcurrentRunCount, len(requestTracker.ListEntries()))
 }
