@@ -9,16 +9,12 @@ import (
 	"req-proxy/observer"
 )
 
-type ProxyServiceInterface interface {
-	Forward(pr *domain.ProxyRequest) (*domain.ProxyResponse, error)
-}
-
 type ProxyResource struct {
-	ProxySvc       ProxyServiceInterface
-	RequestTracker observer.RequestTracker
+	ProxySvc       domain.ProxyServiceInterface
+	RequestTracker observer.RequestHistoryTracker
 }
 
-func NewProxyResource(ps ProxyServiceInterface, rt observer.RequestTracker) *ProxyResource {
+func NewProxyResource(ps domain.ProxyServiceInterface, rt observer.RequestHistoryTracker) *ProxyResource {
 	return &ProxyResource{
 		ProxySvc:       ps,
 		RequestTracker: rt,
@@ -27,7 +23,7 @@ func NewProxyResource(ps ProxyServiceInterface, rt observer.RequestTracker) *Pro
 
 func (p *ProxyResource) MapRoutes(mux *http.ServeMux) {
 	mux.HandleFunc("/proxy", p.proxyHandler)
-	mux.HandleFunc("/proxy/logs", p.proxyLogsHandler)
+	mux.HandleFunc("/proxy/history", p.proxyHistoryHandler)
 }
 
 func (p *ProxyResource) proxyHandler(rw http.ResponseWriter, r *http.Request) {
@@ -49,7 +45,7 @@ func (p *ProxyResource) proxyHandler(rw http.ResponseWriter, r *http.Request) {
 	replyJson(rw, res)
 }
 
-func (p *ProxyResource) proxyLogsHandler(rw http.ResponseWriter, r *http.Request) {
+func (p *ProxyResource) proxyHistoryHandler(rw http.ResponseWriter, r *http.Request) {
 	replyJson(rw, p.RequestTracker.ListEntries())
 }
 

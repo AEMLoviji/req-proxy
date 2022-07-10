@@ -8,6 +8,10 @@ import (
 	"github.com/google/uuid"
 )
 
+type ProxyServiceInterface interface {
+	Forward(pr *ProxyRequest) (*ProxyResponse, error)
+}
+
 type HttpMethod string
 
 const (
@@ -31,10 +35,10 @@ type ProxyResponse struct {
 }
 
 type ProxyService struct {
-	RequestTracker observer.RequestTracker
+	RequestTracker observer.RequestHistoryTracker
 }
 
-func NewProxyService(rt observer.RequestTracker) *ProxyService {
+func NewProxyService(rt observer.RequestHistoryTracker) *ProxyService {
 	return &ProxyService{RequestTracker: rt}
 }
 

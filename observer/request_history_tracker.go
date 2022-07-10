@@ -7,7 +7,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type RequestTracker interface {
+type RequestHistoryTracker interface {
 	AddEntry(te Entry)
 	ListEntries() map[uuid.UUID]Entry
 }
@@ -17,18 +17,18 @@ type Entry struct {
 	ThirdPartyResponse interface{}
 }
 
-type ProxyRequestTracker struct {
+type ProxyRequestHistoryTracker struct {
 	store map[uuid.UUID]Entry
 	mu    sync.Mutex
 }
 
-func NewProxyRequestTracker() *ProxyRequestTracker {
-	return &ProxyRequestTracker{
+func NewProxyRequestTracker() *ProxyRequestHistoryTracker {
+	return &ProxyRequestHistoryTracker{
 		store: make(map[uuid.UUID]Entry),
 	}
 }
 
-func (t *ProxyRequestTracker) AddEntry(te Entry) {
+func (t *ProxyRequestHistoryTracker) AddEntry(te Entry) {
 	uuid := uuid.New()
 	log.Printf("request is being tracked with id %s", uuid)
 
@@ -37,6 +37,6 @@ func (t *ProxyRequestTracker) AddEntry(te Entry) {
 	t.mu.Unlock()
 }
 
-func (t *ProxyRequestTracker) ListEntries() map[uuid.UUID]Entry {
+func (t *ProxyRequestHistoryTracker) ListEntries() map[uuid.UUID]Entry {
 	return t.store
 }

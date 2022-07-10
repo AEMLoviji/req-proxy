@@ -21,9 +21,10 @@ go run main.go -port <any port>
 - [x] minor `ping`<->`pong` route added.
 - [x] HTTP Api with 2 routes.
   - [x] `/proxy`
-  - [x] `/proxy/logs`
+  - [x] `/proxy/history`
 - [x] demonstrated how concurently track requests. See [request_tracker in observer package](./observer/request_tracker.go)
-- [x] `domain` & `observer` packages are covered with tests. See `*test.go` files in the corresponding packages
+- [x] `domain` & `observer` packages are covered with unit tests. See `*test.go` files in the corresponding packages
+- [x] API layer covered with unit tests. See `api > proxy > api_test.go` [api_test.go](./api/proxy/api_test.go) 
 - [x] graceful shutdown logic implemented. See [Start() in server.go in api package](./api/server.go)
 
 ## Request samples
@@ -51,8 +52,8 @@ curl --request GET 'http://localhost:8080/proxy' \
 '
 ```
 
-### /proxy/logs
+### /proxy/history
 
 ```sh
-curl --request GET 'http://localhost:8080/proxy/logs'
+curl --request GET 'http://localhost:8080/proxy/history'
 ```
